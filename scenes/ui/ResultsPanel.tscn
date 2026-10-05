@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://cresults0001"]
+
+[ext_resource type="Script" path="res://scripts/ui/ResultsScreen.cs" id="1_res"]
+
+[node name="ResultsPanel" type="PanelContainer"]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -160.0
+offset_right = 180.0
+offset_bottom = 160.0
+script = ExtResource("1_res")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="ResultsLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "ROUND COMPLETE"
+horizontal_alignment = 1
+
+[node name="PlayAgainBtn" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Play Again (R)"

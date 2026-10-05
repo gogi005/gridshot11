@@ -1,0 +1,215 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmain0000001"]
+
+[ext_resource type="Script" path="res://scripts/core/GameManager.cs" id="1_gm"]
+[ext_resource type="Script" path="res://scripts/modes/GridshotMode.cs" id="2_mode"]
+[ext_resource type="Script" path="res://scripts/targets/GridSpawner.cs" id="3_spawn"]
+[ext_resource type="Script" path="res://scripts/targets/TargetPool.cs" id="4_pool"]
+[ext_resource type="Script" path="res://scripts/utils/ScoreTrackerNode.cs" id="5_score"]
+[ext_resource type="Script" path="res://scripts/player/PlayerController.cs" id="6_player"]
+[ext_resource type="Script" path="res://scripts/player/ShootingSystem.cs" id="7_shoot"]
+[ext_resource type="Script" path="res://scripts/ui/HUDController.cs" id="8_hud"]
+[ext_resource type="Script" path="res://scripts/ui/Crosshair.cs" id="9_cross"]
+[ext_resource type="Script" path="res://scripts/ui/ResultsScreen.cs" id="10_results"]
+
+[sub_resource type="Environment" id="env1"]
+background_mode = 1
+background_color = Color(0.05, 0.05, 0.07, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.6, 0.65, 0.8, 1)
+ambient_light_energy = 0.6
+
+[sub_resource type="PlaneMesh" id="floor_mesh"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="floor_mat"]
+albedo_color = Color(0.15, 0.15, 0.17, 1)
+
+[sub_resource type="BoxShape3D" id="floor_col"]
+size = Vector3(50, 0.2, 50)
+
+[sub_resource type="BoxMesh" id="wall_mesh"]
+size = Vector3(50, 10, 1)
+
+[sub_resource type="StandardMaterial3D" id="wall_mat"]
+albedo_color = Color(0.25, 0.25, 0.28, 1)
+
+[sub_resource type="BoxShape3D" id="wall_col"]
+size = Vector3(50, 10, 1)
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env1")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 8, 0)
+shadow_enabled = true
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Environment"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Floor"]
+mesh = SubResource("floor_mesh")
+surface_material_override/0 = SubResource("floor_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("floor_col")
+
+[node name="BackWall" type="StaticBody3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -11)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/BackWall"]
+mesh = SubResource("wall_mesh")
+surface_material_override/0 = SubResource("wall_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/BackWall"]
+shape = SubResource("wall_col")
+
+[node name="Player" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("6_player")
+MouseSensitivity = 0.002
+
+[node name="Camera3D" type="Camera3D" parent="Player"]
+fov = 90.0
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_gm")
+RoundDuration = 30.0
+
+[node name="GridshotMode" type="Node3D" parent="GameManager"]
+script = ExtResource("2_mode")
+ActiveTargetCount = 3
+ScorePerHit = 100
+
+[node name="GridSpawner" type="Node3D" parent="GameManager/GridshotMode"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("3_spawn")
+GridCols = 4
+GridRows = 3
+CellSpacingX = 3.0
+CellSpacingY = 2.0
+GridDistance = 10.0
+GridBaseHeight = 2.0
+
+[node name="TargetPool" type="Node3D" parent="GameManager/GridshotMode"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("4_pool")
+PoolSize = 15
+TargetRadius = 0.4
+
+[node name="ScoreTracker" type="Node" parent="GameManager"]
+script = ExtResource("5_score")
+
+[node name="ShootingSystem" type="Node" parent="."]
+script = ExtResource("7_shoot")
+RayLength = 100.0
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UILayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_hud")
+GameManagerPath = NodePath("../../GameManager")
+
+[node name="StatsPanel" type="VBoxContainer" parent="UILayer/HUD"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 260.0
+offset_bottom = 200.0
+
+[node name="ScoreLabel" type="Label" parent="UILayer/HUD/StatsPanel"]
+layout_mode = 2
+text = "SCORE  0"
+
+[node name="HitsLabel" type="Label" parent="UILayer/HUD/StatsPanel"]
+layout_mode = 2
+text = "HITS   0"
+
+[node name="MissesLabel" type="Label" parent="UILayer/HUD/StatsPanel"]
+layout_mode = 2
+text = "MISS   0"
+
+[node name="AccuracyLabel" type="Label" parent="UILayer/HUD/StatsPanel"]
+layout_mode = 2
+text = "ACC    0.0%"
+
+[node name="StreakLabel" type="Label" parent="UILayer/HUD/StatsPanel"]
+layout_mode = 2
+text = "STREAK 0"
+
+[node name="TimerLabel" type="Label" parent="UILayer/HUD"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 80.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "30"
+
+[node name="PromptLabel" type="Label" parent="UILayer/HUD"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = -20.0
+offset_right = 300.0
+offset_bottom = 20.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "CLICK TO START"
+
+[node name="Crosshair" type="Control" parent="UILayer/HUD"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+mouse_filter = 2
+script = ExtResource("9_cross")
+CrosshairSize = 10.0
+CrosshairGap = 4.0
+CrosshairThickness = 2.0
+
+[node name="ResultsPanel" type="PanelContainer" parent="UILayer/HUD"]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -160.0
+offset_right = 180.0
+offset_bottom = 160.0
+script = ExtResource("10_results")
+GameManagerPath = NodePath("../../../GameManager")
+
+[node name="VBox" type="VBoxContainer" parent="UILayer/HUD/ResultsPanel"]
+layout_mode = 2
+
+[node name="ResultsLabel" type="Label" parent="UILayer/HUD/ResultsPanel/VBox"]
+layout_mode = 2
+text = "ROUND COMPLETE"
+horizontal_alignment = 1
+
+[node name="PlayAgainBtn" type="Button" parent="UILayer/HUD/ResultsPanel/VBox"]
+layout_mode = 2
+text = "Play Again (R)"

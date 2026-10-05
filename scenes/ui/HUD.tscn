@@ -1,0 +1,63 @@
+[gd_scene load_steps=2 format=3 uid="uid://chudscene001"]
+
+[ext_resource type="Script" path="res://scripts/ui/HUDController.cs" id="1_hud"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+
+[node name="StatsPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+
+[node name="ScoreLabel" type="Label" parent="StatsPanel"]
+layout_mode = 2
+text = "SCORE  0"
+
+[node name="HitsLabel" type="Label" parent="StatsPanel"]
+layout_mode = 2
+text = "HITS   0"
+
+[node name="MissesLabel" type="Label" parent="StatsPanel"]
+layout_mode = 2
+text = "MISS   0"
+
+[node name="AccuracyLabel" type="Label" parent="StatsPanel"]
+layout_mode = 2
+text = "ACC    0.0%"
+
+[node name="StreakLabel" type="Label" parent="StatsPanel"]
+layout_mode = 2
+text = "STREAK 0"
+
+[node name="TimerLabel" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 80.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "30"
+
+[node name="PromptLabel" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = -20.0
+offset_right = 300.0
+offset_bottom = 20.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "CLICK TO START"
